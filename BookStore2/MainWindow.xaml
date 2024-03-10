@@ -1,0 +1,19 @@
+﻿<Window x:Class="BookStore2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BookStore2"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="439" Width="330">
+    <Grid Margin="0,0,-46,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="163*"/>
+            <ColumnDefinition Width="37*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="userIdTxt" HorizontalAlignment="Left" Height="27" Margin="59,68,0,0" TextWrapping="Wrap" Text="admin" VerticalAlignment="Top" Width="223"/>
+        <PasswordBox x:Name="userPasswordTxt" HorizontalAlignment="Left" Height="30" Margin="59,120,0,0" VerticalAlignment="Top" Width="223" Password="1234"/>
+        <Button x:Name="loginBtn" Content="Login" HorizontalAlignment="Left" Height="82" Margin="115,199,0,0" VerticalAlignment="Top" Width="87" Click="loginBtn_Click"/>
+
+    </Grid>
+</Window>
