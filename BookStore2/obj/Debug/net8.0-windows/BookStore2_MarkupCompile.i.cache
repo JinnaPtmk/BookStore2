@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 D:\GitHub\BookStore2\BookStore2\App.xaml
-2251059014
+4-622330457
 
-8-364780484
+10-2063251632
 202-658749216
-HomeWindow.xaml;MainWindow.xaml;
+AddBookWindow.xaml;BooksWindow.xaml;HomeWindow.xaml;MainWindow.xaml;
 
-False
+True
 

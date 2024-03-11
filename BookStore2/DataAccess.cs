@@ -61,6 +61,7 @@ namespace BookStore2
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
                 createTable.ExecuteReader();
             }
+            //Initial User ID
             using (SqliteConnection db =
                new SqliteConnection("Filename=bookStoreProject1.db"))
             {
@@ -72,6 +73,7 @@ namespace BookStore2
                 db.Close();
             }
         }
+        //Add User
         public static void AddUser(string inputID, string InputPw)
         {
             using (SqliteConnection db =
@@ -87,7 +89,7 @@ namespace BookStore2
                 db.Close();
             }
         }
-
+        //Login Check
         public static bool LoggingIn(string CheckId, string CheckPw)
         {
             using (SqliteConnection db = new SqliteConnection("Filename=bookStoreProject1.db"))
@@ -95,7 +97,9 @@ namespace BookStore2
                 bool checker;
                 db.Open();
                 SqliteCommand selectCommand = new SqliteCommand
-                ("SELECT * FROM Users WHERE User_Id = '" + CheckId + "' AND User_Password = '" + CheckPw + "'", db);
+                ("SELECT * FROM Users WHERE User_Id = @UserId AND User_Password = @UserPw", db);
+                selectCommand.Parameters.AddWithValue("@UserId", CheckId);
+                selectCommand.Parameters.AddWithValue("@UserPw", CheckPw);
                 SqliteDataReader query = selectCommand.ExecuteReader();
                 checker = query.Read();
                 db.Close();
@@ -104,6 +108,42 @@ namespace BookStore2
 
             }
 
+        }
+        public static bool UniqueCheck(string CheckIsbn)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=bookStoreProject1.db"))
+            {
+                bool checker;
+                db.Open();
+                SqliteCommand selectCommand = new SqliteCommand
+                ("SELECT * FROM Books WHERE ISBN = @Isbn" , db);
+                selectCommand.Parameters.AddWithValue("@Isbn", CheckIsbn);
+                SqliteDataReader query = selectCommand.ExecuteReader();
+                checker = query.Read();
+                db.Close();
+                return checker;
+
+
+            }
+
+        }
+        //Add Book
+        public static void AddBook(string isbnTxt, string titleTxt,string descriptionTxt, string priceTxt)
+        {
+            using (SqliteConnection db =
+                new SqliteConnection("Filename=bookStoreProject1.db"))
+            {
+                db.Open();
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+                insertCommand.CommandText = "INSERT INTO Books (ISBN,Title,Description,Price) VALUES (@ISBN,@Title,@Description,@Price);";
+                insertCommand.Parameters.AddWithValue("@ISBN", isbnTxt);
+                insertCommand.Parameters.AddWithValue("@Title", titleTxt);
+                insertCommand.Parameters.AddWithValue("@Description", descriptionTxt);
+                insertCommand.Parameters.AddWithValue("@Price", priceTxt);
+                insertCommand.ExecuteReader();
+                db.Close();
+            }
         }
     }
 }

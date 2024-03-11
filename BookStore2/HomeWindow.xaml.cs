@@ -23,5 +23,12 @@ namespace BookStore2
         {
             InitializeComponent();
         }
+
+        private void ManageBooksBtn_Click(object sender, RoutedEventArgs e)
+        {
+            BooksWindow booksWindow = new BooksWindow();
+            booksWindow.Show();
+            Visibility = Visibility.Hidden;
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace BookStore2
             {
                 HomeWindow homeWindow = new HomeWindow();
                 homeWindow.Show();
-                Visibility = Visibility.Collapsed;
+                this.Close();
             }
             else
             {

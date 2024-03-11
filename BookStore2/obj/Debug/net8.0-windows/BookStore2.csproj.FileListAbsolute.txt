@@ -46,3 +46,8 @@ D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\refint\BookStore2.dll
 D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\BookStore2.pdb
 D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\BookStore2.genruntimeconfig.cache
 D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\ref\BookStore2.dll
+D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\BooksWindow.g.cs
+D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\BooksWindow.baml
+D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\BookStore2.sourcelink.json
+D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\AddBookWindow.g.cs
+D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\AddBookWindow.baml
