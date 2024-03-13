@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,12 +25,147 @@ namespace BookStore2
         public BooksWindow()
         {
             InitializeComponent();
+            fillBooksList();
         }
 
-        private void AddBookBtn_Click(object sender, RoutedEventArgs e)
+        public void fillBooksList()
         {
-            AddBookWindow addBook = new AddBookWindow();
-            addBook.Show();
+            using (SqliteConnection db =
+               new SqliteConnection($"Filename=bookStoreProject1.db"))
+            {
+                db.Open();
+                SqliteCommand selectCommand = new SqliteCommand
+                    ("SELECT ISBN,Title from Books", db);
+                SqliteDataReader query = selectCommand.ExecuteReader();
+                while (query.Read())
+                {
+                    string BookName = query.GetString(1);
+                    BookLst.Items.Add(BookName);
+                }
+                db.Close();
+            }
+        }
+        private void refreshBtn_Click(object sender, RoutedEventArgs e)
+        {
+            BookLst.Items.Clear();
+            fillBooksList();
+        }
+        
+        private void Isbn_Txt_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = new Regex("[^0-9]+").IsMatch(e.Text);
+        }
+
+        private void Isbn_Txt_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void Price_Txt_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = new Regex("[^0-9]+").IsMatch(e.Text);
+        }
+
+        private void AddBook_Btn_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (Isbn_Txt.Text.Length != 13 || BookName_Txt.Text == "" || Price_Txt.Text == "")
+            {
+                string notice = "";
+                if (Isbn_Txt.Text.Length != 13)
+                {
+                    notice += "\nกรุณากรอกเลข ISBN 13 หลัก";
+                }
+                if (BookName_Txt.Text == "")
+                {
+                    notice += "\nกรุณาใส่ชื่อหนังสือ";
+                }
+                if (Price_Txt.Text == "")
+                {
+                    notice += "\nกรุณาใส่ราคา";
+                }
+                MessageBox.Show(notice, "เกิดข้อผิดพลาด");
+            }
+            else if (DataAccess.UniqueCheck(Isbn_Txt.Text))
+            {
+                MessageBox.Show("รหัส ISBN นี้มีอยู่แล้ว", "รหัสซ้ำ");
+            }
+            else
+            {
+                DataAccess.AddBook(Isbn_Txt.Text, BookName_Txt.Text, Description_Txt.Text, Price_Txt.Text);
+                MessageBox.Show("ชื่อ : " + BookName_Txt.Text + "\nISBN : " + Isbn_Txt.Text + "\nราคา : " + Price_Txt.Text, "เพิ่มรายการแล้ว");
+                BookLst.SelectedItem = null;
+                BookName_Txt.Clear();
+                Isbn_Txt.Clear();
+                Description_Txt.Clear();
+                Price_Txt.Clear();
+                BookLst.Items.Clear();
+                fillBooksList();
+            }
+        }
+
+        private void BookLst_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (BookLst.SelectedItems.Count > 0)
+            {
+
+                using (SqliteConnection db =
+                   new SqliteConnection($"Filename=bookStoreProject1.db"))
+                {
+                    db.Open();
+                    SqliteCommand selectCommand = new SqliteCommand
+                        ("SELECT * from Books WHERE Title ='" + BookLst.SelectedItem.ToString() + "'", db);
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+                    while (query.Read())
+                    {
+                        string sIsbn = query.GetInt64(0).ToString();
+                        string sTitle = query.GetString(1);
+                        string sDescription = query.GetString(2);
+                        string sPrice = query.GetInt32(3).ToString();
+
+                        Isbn_Txt.Text = sIsbn;
+                        BookName_Txt.Text = sTitle;
+                        Description_Txt.Text = sDescription;
+                        Price_Txt.Text = sPrice;
+
+
+                    }
+                    db.Close();
+                }
+
+
+            }
+        }
+
+        private void EditBook_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            if(BookLst.SelectedItem != null) 
+            {
+                if (DataAccess.UniqueCheck(Isbn_Txt.Text))
+                {
+                    DataAccess.EditBook(BookName_Txt.Text, Description_Txt.Text, Price_Txt.Text, BookLst.SelectedItem.ToString());
+                    MessageBox.Show("แก้ไขรายการแล้ว","แก้ไข");
+                }
+                else
+                {
+                    MessageBox.Show("ไม่สามารถแก้ไขรหัส ISBN ได้ กรุณาเพิ่มเป็นรายการใหม่", "เกิดข้อผิดพลาด");
+                }
+                
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกรายการที่ต้องการแก้ไข", "แก้ไข");
+            }
+            BookLst.Items.Clear();
+            fillBooksList();
+
+        }
+
+        private void DeleteBook_Btn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

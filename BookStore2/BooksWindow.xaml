@@ -7,7 +7,18 @@
         mc:Ignorable="d"
         Title="BooksWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="AddBookBtn" Content="Add Book" HorizontalAlignment="Center" Height="71" Margin="0,198,0,0" VerticalAlignment="Top" Width="94" Click="AddBookBtn_Click"/>
+        <ListBox x:Name="BookLst" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="15,30,547,15" IsSynchronizedWithCurrentItem="True" SelectionChanged="BookLst_SelectionChanged" />
+        <Button x:Name="AddBook_Btn" Content="เพิ่ม" HorizontalAlignment="Left" Height="71" Margin="311,340,0,0" VerticalAlignment="Top" Width="94" Click="AddBook_Btn_Click_1" />
+        <TextBox x:Name="Isbn_Txt" HorizontalAlignment="Left" Height="32" Margin="353,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274" MaxLength="13" PreviewTextInput="Isbn_Txt_PreviewTextInput" PreviewKeyDown="Isbn_Txt_PreviewKeyDown"/>
+        <TextBox x:Name="BookName_Txt" HorizontalAlignment="Left" Height="32" Margin="353,91,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274"/>
+        <TextBox x:Name="Description_Txt" HorizontalAlignment="Left" Height="114" Margin="353,152,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274"/>
+        <TextBox x:Name="Price_Txt" HorizontalAlignment="Left" Height="32" Margin="353,290,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274" PreviewTextInput="Price_Txt_PreviewTextInput"/>
+        <Button x:Name="EditBook_Btn" Content="แก้ไข" HorizontalAlignment="Left" Height="71" Margin="443,340,0,0" VerticalAlignment="Top" Width="94" Click="EditBook_Btn_Click" />
+        <Button x:Name="DeleteBook_Btn" Content="ลบ" HorizontalAlignment="Left" Height="71" Margin="567,340,0,0" VerticalAlignment="Top" Width="94" Click="DeleteBook_Btn_Click" />
+        <Label Content="รหัส :" HorizontalAlignment="Left" Margin="294,33,0,0" VerticalAlignment="Top"/>
+        <Label Content="ชื่อ :" HorizontalAlignment="Left" Margin="294,94,0,0" VerticalAlignment="Top"/>
+        <Label Content="คำอธิบาย :" HorizontalAlignment="Left" Margin="294,152,0,0" VerticalAlignment="Top"/>
+        <Label Content="ราคา :" HorizontalAlignment="Left" Margin="294,293,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

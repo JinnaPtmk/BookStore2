@@ -145,5 +145,24 @@ namespace BookStore2
                 db.Close();
             }
         }
+        //Edti Book
+        //Add Book
+        public static void EditBook(string titleTxt, string descriptionTxt, string priceTxt, string selectedItem)
+        {
+            using (SqliteConnection db =
+                new SqliteConnection("Filename=bookStoreProject1.db"))
+            {
+                db.Open();
+                SqliteCommand updateCommand = new SqliteCommand();
+                updateCommand.Connection = db;
+                updateCommand.CommandText = "UPDATE Books SET Title = @Title, Description = @Description, Price = @Price WHERE Title = @SelectedItem";
+                updateCommand.Parameters.AddWithValue("@Title", titleTxt);
+                updateCommand.Parameters.AddWithValue("@Description", descriptionTxt);
+                updateCommand.Parameters.AddWithValue("@Price", priceTxt);
+                updateCommand.Parameters.AddWithValue("@SelectedItem", selectedItem);
+                updateCommand.ExecuteReader();
+                db.Close();
+            }
+        }
     }
 }
