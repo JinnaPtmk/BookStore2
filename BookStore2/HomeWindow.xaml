@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="HomeWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="ManageBooksBtn" Content="Books" HorizontalAlignment="Left" Height="62" Margin="155,129,0,0" VerticalAlignment="Top" Width="99" Click="ManageBooksBtn_Click"/>
+        <Button x:Name="ManageBooksBtn" Content="จัดการหนังสือ" HorizontalAlignment="Left" Height="62" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ManageBooksBtn_Click"/>
+        <Button Content="ลูกค้า" HorizontalAlignment="Left" Height="62" Margin="137,10,0,0" VerticalAlignment="Top" Width="126" Click="Button_Click"/>
 
     </Grid>
 </Window>

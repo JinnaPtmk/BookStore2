@@ -28,7 +28,12 @@ namespace BookStore2
         {
             BooksWindow booksWindow = new BooksWindow();
             booksWindow.Show();
-            Visibility = Visibility.Hidden;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            CustomersWindow customerWindow = new CustomersWindow();
+            customerWindow.Show();
         }
     }
 }

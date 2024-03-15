@@ -25,9 +25,12 @@ namespace BookStore2
         public BooksWindow()
         {
             InitializeComponent();
-            fillBooksList();
-        }
 
+        }
+        string sortChoice = "Title";
+        string displayChoice = "Title";
+        string searchCondition = "";
+        int listDisplay = 1;
         public void fillBooksList()
         {
             using (SqliteConnection db =
@@ -35,20 +38,15 @@ namespace BookStore2
             {
                 db.Open();
                 SqliteCommand selectCommand = new SqliteCommand
-                    ("SELECT ISBN,Title from Books", db);
+                    ("SELECT ISBN,Title from Books "+searchCondition+" ORDER BY "+sortChoice+" ASC", db);
                 SqliteDataReader query = selectCommand.ExecuteReader();
                 while (query.Read())
                 {
-                    string BookName = query.GetString(1);
+                    string BookName = query.GetString(listDisplay);
                     BookLst.Items.Add(BookName);
                 }
                 db.Close();
             }
-        }
-        private void refreshBtn_Click(object sender, RoutedEventArgs e)
-        {
-            BookLst.Items.Clear();
-            fillBooksList();
         }
         
         private void Isbn_Txt_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -88,7 +86,7 @@ namespace BookStore2
                 }
                 MessageBox.Show(notice, "เกิดข้อผิดพลาด");
             }
-            else if (DataAccess.UniqueCheck(Isbn_Txt.Text))
+            else if (DataAccess.UniqueIsbnCheck(Isbn_Txt.Text))
             {
                 MessageBox.Show("รหัส ISBN นี้มีอยู่แล้ว", "รหัสซ้ำ");
             }
@@ -101,8 +99,7 @@ namespace BookStore2
                 Isbn_Txt.Clear();
                 Description_Txt.Clear();
                 Price_Txt.Clear();
-                BookLst.Items.Clear();
-                fillBooksList();
+                refreshBookList();
             }
         }
 
@@ -116,7 +113,7 @@ namespace BookStore2
                 {
                     db.Open();
                     SqliteCommand selectCommand = new SqliteCommand
-                        ("SELECT * from Books WHERE Title ='" + BookLst.SelectedItem.ToString() + "'", db);
+                        ("SELECT * from Books WHERE "+displayChoice+" ='" + BookLst.SelectedItem.ToString() + "'", db);
                     SqliteDataReader query = selectCommand.ExecuteReader();
                     while (query.Read())
                     {
@@ -143,9 +140,9 @@ namespace BookStore2
         {
             if(BookLst.SelectedItem != null) 
             {
-                if (DataAccess.UniqueCheck(Isbn_Txt.Text))
+                if (DataAccess.UniqueIsbnCheck(Isbn_Txt.Text))
                 {
-                    DataAccess.EditBook(BookName_Txt.Text, Description_Txt.Text, Price_Txt.Text, BookLst.SelectedItem.ToString());
+                    DataAccess.EditBook(BookName_Txt.Text, Description_Txt.Text, Price_Txt.Text,displayChoice, BookLst.SelectedItem.ToString());
                     MessageBox.Show("แก้ไขรายการแล้ว","แก้ไข");
                 }
                 else
@@ -158,14 +155,88 @@ namespace BookStore2
             {
                 MessageBox.Show("กรุณาเลือกรายการที่ต้องการแก้ไข", "แก้ไข");
             }
+            refreshBookList();
+        }
+
+        private void DeleteBook_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            if (BookLst.SelectedItem != null)
+            {
+                DataAccess.DeleteBook(BookLst.SelectedItem.ToString(),displayChoice);
+                refreshBookList();
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกรายการที่ต้องการจะลบ", "ลบ");
+            }
+        }
+
+        private void Sort_Cbx_DropDownClosed(object sender, EventArgs e)
+        {
+           if(Sort_Cbx.SelectedIndex == 0)
+            {
+                sortChoice = "Title";
+            }
+            else
+            {
+                sortChoice = "ISBN";
+            }
+            refreshBookList();
+        }
+        public void refreshBookList()
+        {
             BookLst.Items.Clear();
             fillBooksList();
 
         }
 
-        private void DeleteBook_Btn_Click(object sender, RoutedEventArgs e)
+        private void searchByIsbn_btn_Click(object sender, RoutedEventArgs e)
         {
+            if (Isbn_Txt.Text != "")
+            {
+                searchCondition = "WHERE ISBN LIKE '%" + Isbn_Txt.Text.ToString() + "%'";
+                refreshBookList();
+            }
+            else
+            {
+                searchCondition = "";
+                refreshBookList();
+            }
+        }
 
+        private void searchByTitle_btn_Click(object sender, RoutedEventArgs e)
+        {
+            if (BookName_Txt.Text != "")
+            {
+                searchCondition = "WHERE Title LIKE '%" + BookName_Txt.Text + "%'";
+                refreshBookList();
+            }
+            else
+            {
+                searchCondition = "";
+                refreshBookList();
+            }
+
+        }
+
+        private void title_RadBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            listDisplay = 1;
+            displayChoice = "Title";
+            refreshBookList();
+        }
+
+        private void isbn_RadBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            listDisplay = 0;
+            displayChoice = "ISBN";
+            refreshBookList();
+        }
+
+        private void refresh_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            searchCondition = "";
+            refreshBookList();
         }
     }
 }
