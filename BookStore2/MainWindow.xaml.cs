@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MessageBox = System.Windows.MessageBox;
 
 namespace BookStore2
 {
@@ -35,6 +36,12 @@ namespace BookStore2
                 MessageBox.Show("ID หรือ Password ไม่ถูกต้อง");
             }
            
+        }
+
+        private void addUser_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            AddUserWindow addUserWindow = new AddUserWindow();
+            addUserWindow.Show();
         }
     }
 }

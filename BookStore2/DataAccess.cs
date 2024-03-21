@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace BookStore2
 {
     class DataAccess
     {
-        public async static void InitializeDatabase()
+        public  async static void  InitializeDatabase()
         {
             //Books TABLE
             using (SqliteConnection db =
@@ -20,7 +21,7 @@ namespace BookStore2
                     "(ISBN INTEGER PRIMARY KEY, " +
                     "Title NVARCHAR(255) NOT NULL, " +
                     "Description NVARCHAR(2048) NULL, " +
-                    "Price INTEGER NOT NULL)";
+                    "Price DOUBLE NOT NULL)";
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
                 createTable.ExecuteReader();
             }
@@ -33,7 +34,7 @@ namespace BookStore2
                     "(Customer_Id INTEGER(10) PRIMARY KEY, " +
                     "Customer_Name NVARCHAR(255) NOT NULL, " +
                     "Address NVARCHAR(2048) NULL, " +
-                    "Phone INTEGER NULL,"+
+                    "Phone NVARCHAR(10) NULL,"+
                     "Email NVARCHAR(255) NOT NULL)";
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
                 createTable.ExecuteReader();
@@ -45,10 +46,10 @@ namespace BookStore2
             {
                 db.Open();
                 String tableCommand = "CREATE TABLE IF NOT EXISTS Transactions " +
-                    "(ISBN INTEGER PRIMARY KEY, " +
-                    "Customer_Id NVARCHAR(255) NOT NULL, " +
+                    "(ISBN INTEGER NOT NULL, " +
+                    "Customer_Id INTEGER(10) NOT NULL, " +
                     "Quantity INTEGER NOT NULL, " +
-                    "Total_Price INTEGER NOT NULL)";
+                    "Total_Price DOUBLE NOT NULL)";
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
                 createTable.ExecuteReader();
             }
@@ -63,17 +64,6 @@ namespace BookStore2
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
                 createTable.ExecuteReader();
             }
-            //Initial User ID
-            using (SqliteConnection db =
-               new SqliteConnection("Filename=bookStoreProject1.db"))
-            {
-                db.Open();
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-                insertCommand.CommandText = "INSERT OR IGNORE INTO Users (User_Id,User_Password) VALUES ('admin','1234');";
-                insertCommand.ExecuteReader();
-                db.Close();
-            }
         }
         //Add User
         public static void AddUser(string inputID, string InputPw)
@@ -87,6 +77,23 @@ namespace BookStore2
                 insertCommand.CommandText = "INSERT INTO Users (User_Id,User_Password) VALUES (@UserId,@UserPw);";
                 insertCommand.Parameters.AddWithValue("@UserId", inputID);
                 insertCommand.Parameters.AddWithValue("@UserPw", InputPw);
+                insertCommand.ExecuteReader();
+                db.Close();
+            }
+        }
+        public static void AddTransaction(string ISBN, string CustomerId, string Quantity, string TotalPrice)
+        {
+            using (SqliteConnection db =
+                new SqliteConnection("Filename=bookStoreProject1.db"))
+            {
+                db.Open();
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+                insertCommand.CommandText = "INSERT INTO Transactions (ISBN,Customer_Id,Quantity,Total_Price) VALUES (@ISBN,@CustomerId,@Quantity,@TotalPrice)";
+                insertCommand.Parameters.AddWithValue("@ISBN", ISBN);
+                insertCommand.Parameters.AddWithValue("@CustomerId", CustomerId);
+                insertCommand.Parameters.AddWithValue("@Quantity", Quantity);
+                insertCommand.Parameters.AddWithValue("@TotalPrice", TotalPrice);
                 insertCommand.ExecuteReader();
                 db.Close();
             }
@@ -138,6 +145,22 @@ namespace BookStore2
                 return checker;
             }
         }
+        public static bool UniqueUserCheck(string CheckUserId)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=bookStoreProject1.db"))
+            {
+                bool checker;
+                db.Open();
+                SqliteCommand selectCommand = new SqliteCommand
+                ("SELECT User_Id FROM Users WHERE User_Id = @UserId", db);
+                selectCommand.Parameters.AddWithValue("@UserId", CheckUserId);
+                SqliteDataReader query = selectCommand.ExecuteReader();
+                checker = query.Read();
+                db.Close();
+                return checker;
+            }
+        }
+
         //Add Book
         public static void AddBook(string bookIsbn, string bookTitle,string bookDescription, string bookPrice)
         {
@@ -157,7 +180,7 @@ namespace BookStore2
             }
         }
         //Edit Book
-        public static void EditBook(string bookTitle, string bookDescription, string bookPrice,string displayChoice, string selectedItem)
+        public static void EditBook(string bookTitle, string bookDescription, string bookPrice, string selectedItem)
         {
             using (SqliteConnection db =
                 new SqliteConnection("Filename=bookStoreProject1.db"))
@@ -165,7 +188,7 @@ namespace BookStore2
                 db.Open();
                 SqliteCommand updateCommand = new SqliteCommand();
                 updateCommand.Connection = db;
-                updateCommand.CommandText = "UPDATE Books SET Title = @Title, Description = @Description, Price = @Price WHERE "+displayChoice+" = @SelectedItem";
+                updateCommand.CommandText = "UPDATE Books SET Title = @Title, Description = @Description, Price = @Price WHERE ISBN = @SelectedItem";
                 updateCommand.Parameters.AddWithValue("@Title", bookTitle);
                 updateCommand.Parameters.AddWithValue("@Description", bookDescription);
                 updateCommand.Parameters.AddWithValue("@Price", bookPrice);
@@ -175,7 +198,7 @@ namespace BookStore2
             }
         }
         //Delete Book
-        public static void DeleteBook(string selectedItem,string displayChoice)
+        public static void DeleteBook(string selectedItem)
         {
             using (SqliteConnection db =
                 new SqliteConnection("Filename=bookStoreProject1.db"))
@@ -183,7 +206,7 @@ namespace BookStore2
                 db.Open();
                 SqliteCommand deleteCommand = new SqliteCommand();
                 deleteCommand.Connection = db;
-                deleteCommand.CommandText = "DELETE FROM Books WHERE "+displayChoice+" = @SelectedItem";
+                deleteCommand.CommandText = "DELETE FROM Books WHERE ISBN = @SelectedItem";
                 deleteCommand.Parameters.AddWithValue("@SelectedItem", selectedItem);
                 deleteCommand.ExecuteReader();
                 db.Close();
@@ -209,8 +232,28 @@ namespace BookStore2
                 db.Close();
             }
         }
+        //Edit Customer
+        public static void EditCustomer(string customerName, string address, string phone, string email, string selectedItem)
+        {
+            using (SqliteConnection db =
+                new SqliteConnection("Filename=bookStoreProject1.db"))
+            {
+                db.Open();
+                SqliteCommand updateCommand = new SqliteCommand();
+                updateCommand.Connection = db;
+                updateCommand.CommandText = "UPDATE Customers SET Customer_Name = @CustomerName, Address = @Address," +
+                    "Phone = @Phone, Email = @Email WHERE Customer_Id = @SelectedItem";
+                updateCommand.Parameters.AddWithValue("@CustomerName", customerName);
+                updateCommand.Parameters.AddWithValue("@Address", address);
+                updateCommand.Parameters.AddWithValue("@Phone", phone);
+                updateCommand.Parameters.AddWithValue("@Email", email);
+                updateCommand.Parameters.AddWithValue("@SelectedItem", selectedItem);
+                updateCommand.ExecuteReader();
+                db.Close();
+            }
+        }
         //Delete Customer
-        public static void DeleteCustomer(string selectedItem, string displayChoice)
+        public static void DeleteCustomer(string selectedItem)
         {
             using (SqliteConnection db =
                 new SqliteConnection("Filename=bookStoreProject1.db"))
@@ -218,7 +261,7 @@ namespace BookStore2
                 db.Open();
                 SqliteCommand deleteCommand = new SqliteCommand();
                 deleteCommand.Connection = db;
-                deleteCommand.CommandText = "DELETE FROM Customers WHERE " + displayChoice + " = @SelectedItem";
+                deleteCommand.CommandText = "DELETE FROM Customers WHERE Customer_Id = @SelectedItem";
                 deleteCommand.Parameters.AddWithValue("@SelectedItem", selectedItem);
                 deleteCommand.ExecuteReader();
                 db.Close();

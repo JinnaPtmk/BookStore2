@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="BooksWindow" Height="450" Width="800">
     <Grid>
-        <ListBox x:Name="BookLst" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="15,50,550,15" IsSynchronizedWithCurrentItem="True" SelectionChanged="BookLst_SelectionChanged" Height="347" VerticalAlignment="Bottom" />
+        <ListBox x:Name="BookLst" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="15,91,0,15" IsSynchronizedWithCurrentItem="True" SelectionChanged="BookLst_SelectionChanged" HorizontalAlignment="Left" Width="235" />
         <Button x:Name="AddBook_Btn" Content="เพิ่ม" HorizontalAlignment="Left" Height="55" Margin="311,340,0,0" VerticalAlignment="Top" Width="94" Click="AddBook_Btn_Click_1" />
         <TextBox x:Name="Isbn_Txt" HorizontalAlignment="Left" Height="32" Margin="353,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274" MaxLength="13" PreviewTextInput="Isbn_Txt_PreviewTextInput" PreviewKeyDown="Isbn_Txt_PreviewKeyDown"/>
         <TextBox x:Name="BookName_Txt" HorizontalAlignment="Left" Height="32" Margin="353,91,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274"/>
@@ -17,15 +17,15 @@
         <Button x:Name="DeleteBook_Btn" Content="ลบ" HorizontalAlignment="Left" Height="55" Margin="567,340,0,0" VerticalAlignment="Top" Width="94" Click="DeleteBook_Btn_Click" />
         <Label Content="คำอธิบาย :" HorizontalAlignment="Left" Margin="294,152,0,0" VerticalAlignment="Top"/>
         <Label Content="ราคา :" HorizontalAlignment="Left" Margin="294,293,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="Sort_Cbx" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="20,20,0,0" SelectedIndex="0" DropDownClosed="Sort_Cbx_DropDownClosed">
+        <ComboBox x:Name="Sort_Cbx" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="20,15,0,0" SelectedIndex="0" DropDownClosed="Sort_Cbx_DropDownClosed">
             <ComboBoxItem>เรียงตามชื่อ</ComboBoxItem>
             <ComboBoxItem>เรียงตามISBN</ComboBoxItem>
         </ComboBox>
-        <Button x:Name="searchByIsbn_btn" Content="ค้นหารหัส" HorizontalAlignment="Left" Height="32" Margin="638,30,0,0" VerticalAlignment="Top" Width="79" Click="searchByIsbn_btn_Click"/>
-        <Button x:Name="searchByTitle_btn" Content="ค้นหาชื่อ" HorizontalAlignment="Left" Height="32" Margin="638,94,0,0" VerticalAlignment="Top" Width="79" Click="searchByTitle_btn_Click"/>
-        <RadioButton x:Name="title_RadBtn" Content="ชื่อ :" HorizontalAlignment="Left" Margin="297,103,0,0" VerticalAlignment="Top" IsChecked="True" Checked="title_RadBtn_Checked"/>
-        <RadioButton x:Name="isbn_RadBtn" Content="ISBN :" HorizontalAlignment="Left" Margin="297,39,0,0" VerticalAlignment="Top" Checked="isbn_RadBtn_Checked"/>
-        <Button x:Name="refresh_Btn" Content="refresh" HorizontalAlignment="Left" Margin="210,21,0,0" VerticalAlignment="Top" Click="refresh_Btn_Click"/>
+        <Button x:Name="search_Btn" Content="ค้นหา" HorizontalAlignment="Left" Height="32" Margin="200,52,0,0" VerticalAlignment="Top" Width="51" Click="search_Btn_Click"/>
+        <Button x:Name="refresh_Btn" Content="refresh" HorizontalAlignment="Left" Margin="210,16,0,0" VerticalAlignment="Top" Click="refresh_Btn_Click"/>
+        <TextBox x:Name="searchTxt" HorizontalAlignment="Left" Height="30" Margin="16,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
+        <Label Content="ชื่อ :" HorizontalAlignment="Left" Margin="294,94,0,0" VerticalAlignment="Top"/>
+        <Label Content="ISBN :" HorizontalAlignment="Left" Margin="294,33,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

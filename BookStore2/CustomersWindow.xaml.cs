@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
 
 namespace BookStore2
 {
@@ -28,12 +30,11 @@ namespace BookStore2
             fillCustomersList();
         }
         string sortChoice = "Customer_Name";
-        string displayChoice = "Customer_Name";
         string searchCondition = "";
-        int listDisplay = 1;
-        int CustomerCounter = 0;
+        readonly string output = "{0,-10}\t{1,-10}";
         public void fillCustomersList()
         {
+            CustomersLst.Items.Clear();
             using (SqliteConnection db =
                new SqliteConnection($"Filename=bookStoreProject1.db"))
             {
@@ -43,17 +44,12 @@ namespace BookStore2
                 SqliteDataReader query = selectCommand.ExecuteReader();
                 while (query.Read())
                 {
-                    string CustomerName = query.GetString(listDisplay);
-                    CustomersLst.Items.Add(CustomerName);
+                    string CustomerName = query.GetString(1);
+                    string CustomerId = query.GetString(0);
+                    CustomersLst.Items.Add(string.Format(output,CustomerId,CustomerName));
                 }
                 db.Close();
             }
-        }
-        public void refreshCustomerList()
-        {
-            CustomersLst.Items.Clear();
-            fillCustomersList();
-
         }
         private void CustomerId_Txt_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -110,7 +106,7 @@ namespace BookStore2
                 CustomerAddress_Txt.Clear();
                 CustomerPhone_Txt.Clear();
                 CustomerEmail_Txt.Clear();
-                refreshCustomerList();
+                fillCustomersList();
             }
         }
 
@@ -124,14 +120,14 @@ namespace BookStore2
                 {
                     db.Open();
                     SqliteCommand selectCommand = new SqliteCommand
-                        ("SELECT * from Customers WHERE " + displayChoice + " ='" + CustomersLst.SelectedItem.ToString() + "'", db);
+                        (string.Concat("SELECT * from Customers WHERE Customer_Id = '", CustomersLst.SelectedItem.ToString().AsSpan(0, 10), "'"), db);
                     SqliteDataReader query = selectCommand.ExecuteReader();
                     while (query.Read())
                     {
                         string sCustomerId = query.GetInt64(0).ToString();
                         string sCustomerName = query.GetString(1);
                         string sAddress = query.GetString(2);
-                        string sPhone = query.GetInt32(3).ToString();
+                        string sPhone = query.GetString(3);
                         string sEmail = query.GetString(4);
 
                         CustomerId_Txt.Text = sCustomerId;
@@ -144,8 +140,6 @@ namespace BookStore2
                     }
                     db.Close();
                 }
-
-
             }
         }
 
@@ -153,13 +147,72 @@ namespace BookStore2
         {
             if (CustomersLst.SelectedItem != null)
             {
-                DataAccess.DeleteCustomer(CustomersLst.SelectedItem.ToString(), displayChoice);
-                refreshCustomerList();
+                DataAccess.DeleteCustomer(CustomersLst.SelectedItem.ToString().Substring(0, 10));
+                fillCustomersList();
             }
             else
             {
                 MessageBox.Show("กรุณาเลือกรายการที่ต้องการจะลบ", "ลบ");
             }
+        }
+
+
+        private void Sort_Cbx_DropDownClosed(object sender, EventArgs e)
+        {
+            if (Sort_Cbx.SelectedIndex == 0)
+            {
+                sortChoice = "Customer_Name";
+            }
+            else
+            {
+                sortChoice = "Customer_Id";
+            }
+            fillCustomersList();
+        }
+        private void Refresh_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            searchCondition = "";
+            CustomerId_Txt.Text = DateTime.Now.ToString("yyMMdd") + (DataAccess.CustomerCount() + 1).ToString("0000");
+            CustomerName_Txt.Text = "";
+            CustomerAddress_Txt.Text = "";
+            CustomerPhone_Txt.Text = "";
+            CustomerEmail_Txt.Text = "";
+            fillCustomersList();
+        }
+
+        private void Search_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CustomerId_Txt.Text != "")
+            {
+                searchCondition = "WHERE Customer_Id LIKE '%" + search_Txt.Text.ToString() + "%' OR Customer_Name LIKE '%"+search_Txt.Text.ToString()+"%'";
+                fillCustomersList();
+            }
+            else
+            {
+                searchCondition = "";
+                fillCustomersList();
+            }
+        }
+        private void EditCustomer_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CustomersLst.SelectedItem != null)
+            {
+                if (DataAccess.UniqueCustomerCheck(CustomerId_Txt.Text))
+                {
+                    DataAccess.EditCustomer(CustomerName_Txt.Text, CustomerAddress_Txt.Text, CustomerPhone_Txt.Text,CustomerEmail_Txt.Text, CustomersLst.SelectedItem.ToString().Substring(0, 10));
+                    MessageBox.Show("แก้ไขรายการแล้ว", "แก้ไข");
+                }
+                else
+                {
+                    MessageBox.Show("ไม่สามารถแก้ไขรหัสลูกค้าได้ กรุณาเพิ่มเป็นรายการใหม่", "เกิดข้อผิดพลาด");
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกรายการที่ต้องการแก้ไข", "แก้ไข");
+            }
+            fillCustomersList();
         }
     }
 }

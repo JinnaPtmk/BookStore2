@@ -13,7 +13,8 @@
         </Grid.ColumnDefinitions>
         <TextBox x:Name="userIdTxt" HorizontalAlignment="Left" Height="27" Margin="59,68,0,0" TextWrapping="Wrap" Text="admin" VerticalAlignment="Top" Width="223"/>
         <PasswordBox x:Name="userPasswordTxt" HorizontalAlignment="Left" Height="30" Margin="59,120,0,0" VerticalAlignment="Top" Width="223" Password="1234"/>
-        <Button x:Name="loginBtn" Content="Login" HorizontalAlignment="Left" Height="82" Margin="115,199,0,0" VerticalAlignment="Top" Width="87" Click="loginBtn_Click"/>
+        <Button x:Name="loginBtn" Content="Login" HorizontalAlignment="Left" Height="39" Margin="115,199,0,0" VerticalAlignment="Top" Width="87" Click="loginBtn_Click"/>
+        <Button x:Name="addUser_Btn" Content="เพิ่มผู้ใช้" HorizontalAlignment="Left" Height="36" Margin="115,336,0,0" VerticalAlignment="Top" Width="87" Click="addUser_Btn_Click"/>
 
     </Grid>
 </Window>

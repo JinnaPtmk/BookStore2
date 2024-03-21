@@ -14,6 +14,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
 
 namespace BookStore2
 {
@@ -25,28 +27,28 @@ namespace BookStore2
         public BooksWindow()
         {
             InitializeComponent();
+            fillBooksList();
 
         }
         string sortChoice = "Title";
-        string displayChoice = "Title";
         string searchCondition = "";
-        int listDisplay = 1;
+        readonly string output = "{0,-10}\t{1,-10}";
         public void fillBooksList()
         {
-            using (SqliteConnection db =
-               new SqliteConnection($"Filename=bookStoreProject1.db"))
+            BookLst.Items.Clear();
+            using SqliteConnection db =
+               new($"Filename=bookStoreProject1.db");
+            db.Open();
+            SqliteCommand selectCommand = new SqliteCommand
+                ("SELECT ISBN,Title from Books " + searchCondition + " ORDER BY " + sortChoice + " ASC", db);
+            SqliteDataReader query = selectCommand.ExecuteReader();
+            while (query.Read())
             {
-                db.Open();
-                SqliteCommand selectCommand = new SqliteCommand
-                    ("SELECT ISBN,Title from Books "+searchCondition+" ORDER BY "+sortChoice+" ASC", db);
-                SqliteDataReader query = selectCommand.ExecuteReader();
-                while (query.Read())
-                {
-                    string BookName = query.GetString(listDisplay);
-                    BookLst.Items.Add(BookName);
-                }
-                db.Close();
+                string BookName = query.GetString(1);
+                string BookISBN = query.GetString(0);
+                BookLst.Items.Add(string.Format(output, BookISBN, BookName));
             }
+            db.Close();
         }
         
         private void Isbn_Txt_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -99,7 +101,7 @@ namespace BookStore2
                 Isbn_Txt.Clear();
                 Description_Txt.Clear();
                 Price_Txt.Clear();
-                refreshBookList();
+                fillBooksList();
             }
         }
 
@@ -113,7 +115,7 @@ namespace BookStore2
                 {
                     db.Open();
                     SqliteCommand selectCommand = new SqliteCommand
-                        ("SELECT * from Books WHERE "+displayChoice+" ='" + BookLst.SelectedItem.ToString() + "'", db);
+                        (string.Concat("SELECT * from Books WHERE ISBN ='", BookLst.SelectedItem.ToString().AsSpan(0,13), "'"), db);
                     SqliteDataReader query = selectCommand.ExecuteReader();
                     while (query.Read())
                     {
@@ -142,7 +144,7 @@ namespace BookStore2
             {
                 if (DataAccess.UniqueIsbnCheck(Isbn_Txt.Text))
                 {
-                    DataAccess.EditBook(BookName_Txt.Text, Description_Txt.Text, Price_Txt.Text,displayChoice, BookLst.SelectedItem.ToString());
+                    DataAccess.EditBook(BookName_Txt.Text, Description_Txt.Text, Price_Txt.Text, BookLst.SelectedItem.ToString().Substring(0,13));
                     MessageBox.Show("แก้ไขรายการแล้ว","แก้ไข");
                 }
                 else
@@ -155,15 +157,15 @@ namespace BookStore2
             {
                 MessageBox.Show("กรุณาเลือกรายการที่ต้องการแก้ไข", "แก้ไข");
             }
-            refreshBookList();
+            fillBooksList();
         }
 
         private void DeleteBook_Btn_Click(object sender, RoutedEventArgs e)
         {
             if (BookLst.SelectedItem != null)
             {
-                DataAccess.DeleteBook(BookLst.SelectedItem.ToString(),displayChoice);
-                refreshBookList();
+                DataAccess.DeleteBook(BookLst.SelectedItem.ToString().Substring(0,13));
+                fillBooksList();
             }
             else
             {
@@ -181,62 +183,26 @@ namespace BookStore2
             {
                 sortChoice = "ISBN";
             }
-            refreshBookList();
-        }
-        public void refreshBookList()
-        {
-            BookLst.Items.Clear();
             fillBooksList();
-
         }
-
-        private void searchByIsbn_btn_Click(object sender, RoutedEventArgs e)
+        private void search_Btn_Click(object sender, RoutedEventArgs e)
         {
-            if (Isbn_Txt.Text != "")
+            if (searchTxt.Text != "")
             {
-                searchCondition = "WHERE ISBN LIKE '%" + Isbn_Txt.Text.ToString() + "%'";
-                refreshBookList();
+                searchCondition = "WHERE ISBN LIKE '%" + searchTxt.Text.ToString() + "%' OR Title LIKE '%" + searchTxt.Text.ToString() + "%'";
+                fillBooksList();
             }
             else
             {
                 searchCondition = "";
-                refreshBookList();
+                fillBooksList();
             }
-        }
-
-        private void searchByTitle_btn_Click(object sender, RoutedEventArgs e)
-        {
-            if (BookName_Txt.Text != "")
-            {
-                searchCondition = "WHERE Title LIKE '%" + BookName_Txt.Text + "%'";
-                refreshBookList();
-            }
-            else
-            {
-                searchCondition = "";
-                refreshBookList();
-            }
-
-        }
-
-        private void title_RadBtn_Checked(object sender, RoutedEventArgs e)
-        {
-            listDisplay = 1;
-            displayChoice = "Title";
-            refreshBookList();
-        }
-
-        private void isbn_RadBtn_Checked(object sender, RoutedEventArgs e)
-        {
-            listDisplay = 0;
-            displayChoice = "ISBN";
-            refreshBookList();
         }
 
         private void refresh_Btn_Click(object sender, RoutedEventArgs e)
         {
             searchCondition = "";
-            refreshBookList();
+            fillBooksList();
         }
     }
 }

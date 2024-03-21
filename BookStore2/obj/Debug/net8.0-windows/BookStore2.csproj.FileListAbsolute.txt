@@ -51,3 +51,5 @@ D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\BooksWindow.baml
 D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\BookStore2.sourcelink.json
 D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\CustomersWindow.g.cs
 D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\CustomersWindow.baml
+D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\AddUserWindow.g.cs
+D:\GitHub\BookStore2\BookStore2\obj\Debug\net8.0-windows\AddUserWindow.baml

@@ -6,9 +6,59 @@
         xmlns:local="clr-namespace:BookStore2"
         mc:Ignorable="d"
         Title="HomeWindow" Height="450" Width="800">
-    <Grid>
-        <Button x:Name="ManageBooksBtn" Content="จัดการหนังสือ" HorizontalAlignment="Left" Height="62" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ManageBooksBtn_Click"/>
-        <Button Content="ลูกค้า" HorizontalAlignment="Left" Height="62" Margin="137,10,0,0" VerticalAlignment="Top" Width="126" Click="Button_Click"/>
-
+    <Grid HorizontalAlignment="Center" Width="800" Height="464" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="195*"/>
+            <RowDefinition Height="269*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="10,0,0,87" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2" HorizontalAlignment="Left" Width="283" VerticalAlignment="Top">
+            <StackPanel.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </StackPanel.RenderTransform>
+            <Button x:Name="ManageCustomers_Btn" Content="จัดการข้อมูลลูกค้า" Height="30" Width="282" Click="ManageCustomer_Btn_Click"/>
+            <DockPanel Height="30" Width="280">
+                <TextBox x:Name="searchCustomers_Txt" TextWrapping="Wrap" Width="225"/>
+                <Button x:Name="searchCustomer_Btn" Content="ค้นหา" Width="54" Click="searchCustomer_Btn_Click"/>
+            </DockPanel>
+            <ListBox x:Name="CustomerLst" d:ItemsSource="{d:SampleData ItemCount=5}" Height="124" Width="284" SelectionChanged="CustomerLst_SelectionChanged"/>
+            <Button x:Name="ManageBooks_Btn" Content="จัดการหนังสือ" Click="ManageBooks_Btn_Click" Height="31" Width="280"/>
+            <DockPanel Height="34" LastChildFill="False" Width="278">
+                <TextBox x:Name="searchBooks_Txt" TextWrapping="Wrap" Width="222"/>
+                <Button x:Name="searchBooks_Btn" Content="ค้นหา" Width="54" Click="searchBooks_Btn_Click"/>
+            </DockPanel>
+            <ListBox x:Name="BookLst" d:ItemsSource="{d:SampleData ItemCount=5}" Height="128" Width="278" SelectionChanged="BookLst_SelectionChanged"/>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Left" Height="185" Margin="293,0,0,0" VerticalAlignment="Top" Width="507">
+            <TextBlock TextWrapping="Wrap" Text="รายการคำสั่งซื้อ" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold"/>
+            <Label x:Name="customerName_Lbl" Content="ชื่อลูกค้า :"/>
+            <Label x:Name="customerId_Lbl" Content="รหัส :"/>
+            <Label x:Name="customerAddress_Lbl" Content="ที่อยู่ :"/>
+            <Label x:Name="customerPhone_Lbl" Content="เบอร์โทรศัพท์ :"/>
+            <Label x:Name="customerEmail_Lbl" Content="อีเมล :"/>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Left" Height="245" Margin="293,188,0,0" VerticalAlignment="Top" Width="497" Grid.RowSpan="2">
+            <Label x:Name="bookName_Lbl" Content="ชื่อหนังสือ :"/>
+            <Label x:Name="isbn_Lbl" Content="ISBN :"/>
+            <TextBlock x:Name="bookDescription_Txt" Height="53" TextWrapping="Wrap" Text="คำอธิบาย :" Width="490"/>
+            <StackPanel Height="32" Orientation="Horizontal">
+                <Label Content="ราคาต่อเล่ม :"/>
+                <TextBox x:Name="bookPrice_Txt" Height="32" TextWrapping="Wrap" Width="113"/>
+                <Button x:Name="minus_Btn" Content="-" Height="24" Width="20" Click="minus_Btn_Click"/>
+                <Label x:Name="quantity_Lbl" Content="1"/>
+                <Button x:Name="plus_Btn" Content="+" Height="24" Width="20" Click="plus_Btn_Click"/>
+            </StackPanel>
+            <StackPanel Height="32" Orientation="Horizontal">
+                <Label Content="ราคา :"/>
+                <Label x:Name="ttlPrice_Lbl" Content="0"/>
+            </StackPanel>
+            <StackPanel Height="18"/>
+            <Button x:Name="submitOrder_Btn" Content="สรุปคำสั่งซื้อ" Height="35" Width="104" Click="submitOrder_Btn_Click"/>
+        </StackPanel>
     </Grid>
+
 </Window>
