@@ -109,13 +109,12 @@ namespace BookStore2
         {
             if (BookLst.SelectedItems.Count > 0)
             {
-
                 using (SqliteConnection db =
                    new SqliteConnection($"Filename=bookStoreProject1.db"))
                 {
                     db.Open();
                     SqliteCommand selectCommand = new SqliteCommand
-                        (string.Concat("SELECT * from Books WHERE ISBN ='", BookLst.SelectedItem.ToString().AsSpan(0,13), "'"), db);
+                        (string.Concat("SELECT * from Books WHERE ISBN ='", BookLst.SelectedItem.ToString().AsSpan(0, 13), "'"), db);
                     SqliteDataReader query = selectCommand.ExecuteReader();
                     while (query.Read())
                     {
@@ -133,8 +132,6 @@ namespace BookStore2
                     }
                     db.Close();
                 }
-
-
             }
         }
 

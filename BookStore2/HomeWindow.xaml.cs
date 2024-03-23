@@ -95,7 +95,6 @@ namespace BookStore2
         {
             if (CustomerLst.SelectedItems.Count > 0)
             {
-
                 using (SqliteConnection db =
                    new SqliteConnection($"Filename=bookStoreProject1.db"))
                 {
@@ -111,11 +110,11 @@ namespace BookStore2
                         string sPhone = query.GetString(3);
                         string sEmail = query.GetString(4);
 
-                        customerId_Lbl.Content = "รหัส : " + sCustomerId;
-                        customerName_Lbl.Content = "ชื่อลูกค้า : " + sCustomerName;
-                        customerAddress_Lbl.Content = "ที่อยู่ : " + sAddress;
-                        customerPhone_Lbl.Content = "เบอร์โทรศัพท์ : " + sPhone;
-                        customerEmail_Lbl.Content = "อีเมล : " + sEmail;
+                        customerId_Lbl.Content = sCustomerId;
+                        customerName_Lbl.Content = sCustomerName;
+                        customerAddress_Lbl.Content = sAddress;
+                        customerPhone_Lbl.Content = sPhone;
+                        customerEmail_Lbl.Content = sEmail;
 
 
                     }
@@ -128,7 +127,6 @@ namespace BookStore2
         {
             if (BookLst.SelectedItems.Count > 0)
             {
-
                 using (SqliteConnection db =
                    new SqliteConnection($"Filename=bookStoreProject1.db"))
                 {
@@ -143,9 +141,9 @@ namespace BookStore2
                         string sDescription = query.GetString(2);
                         string sPrice = query.GetInt32(3).ToString();
 
-                        isbn_Lbl.Content = "ISBN : "+sIsbn;
-                        bookName_Lbl.Content = "ชื่อหนังสือ : "+sTitle;
-                        bookDescription_Txt.Text = "คำอธิบาย : "+sDescription;
+                        isbn_Lbl.Content = sIsbn;
+                        bookName_Lbl.Content = sTitle;
+                        bookDescription_Txt.Text = sDescription;
                         bookPrice_Txt.Text = sPrice;
                         ttlPrice_Lbl.Content = sPrice;
 
@@ -153,6 +151,7 @@ namespace BookStore2
                     }
                     db.Close();
                 }
+                quantity_Lbl.Content = 1;
             }
         }
         private void plus_Btn_Click(object sender, RoutedEventArgs e)
@@ -165,7 +164,7 @@ namespace BookStore2
 
         private void minus_Btn_Click(object sender, RoutedEventArgs e)
         {
-            if (int.Parse(quantity_Lbl.ToString()) > 1)
+            if (int.Parse(quantity_Lbl.Content.ToString()) > 1)
             {
                 int quantity = int.Parse(quantity_Lbl.Content.ToString()) - 1;
                 quantity_Lbl.Content = quantity;
@@ -188,12 +187,18 @@ namespace BookStore2
             }
             else
             {
-                DataAccess.AddTransaction(isbn_Lbl.ToString(), customerId_Lbl.ToString(), quantity_Lbl.ToString(), ttlPrice_Lbl.ToString());
+                DataAccess.AddTransaction(isbn_Lbl.Content.ToString(), customerId_Lbl.Content.ToString(), quantity_Lbl.Content.ToString(), ttlPrice_Lbl.Content.ToString());
                 MessageBox.Show("สร้างรายการสั่งซื้อสำเร็จ\nลูกค้า : "+CustomerLst.SelectedItem.ToString()+"\nรายการสินค้า : "+BookLst.SelectedItem.ToString()+
                     "\nจำนวน "+quantity_Lbl.Content.ToString()+" เล่ม\nรวมราคา "+ttlPrice_Lbl.Content.ToString()+" บาท");
 
             }
 
+        }
+        private void showTransactions_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> transactions = DataAccess.GetTransactions();
+            string showTransacts = string.Join(",\n", transactions);
+            MessageBox.Show(showTransacts.ToString());
         }
     }
 }
